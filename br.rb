@@ -7,7 +7,11 @@ end
 require 'io/console'
 
 def display_picker(branches)
-  puts "Select a branch to switch to:"
+  if search_mode
+    puts "Search: #{search_query}"
+  else
+    puts "Use j/k or arrow keys to navigate, / to search, Enter to select, Esc or Ctrl+C to exit."
+  end
   index = 0
   search_mode = false
   search_query = ""
