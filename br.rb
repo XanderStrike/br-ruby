@@ -39,12 +39,11 @@ def display_picker(branches)
       search_query.chop! if search_mode
     when "\e"
       search_mode = false
-    when /^[a-zA-Z0-9]$/
-      search_query << input if search_mode
+    else
       if search_mode
         if input == "\u007F" # Handle backspace
           search_query.chop!
-        else
+        elsif input.match?(/^[a-zA-Z0-9]$/)
           search_query << input
         end
         index = 0
