@@ -29,13 +29,18 @@ def display_picker(branches)
     when "\r"
       return branches.index(filtered_branches[index])
     when "\e[A", "k"
-      index = (index - 1) % filtered_branches.size unless search_mode
+      index = (index - 1) % filtered_branches.size if !search_mode && !filtered_branches.empty?
     when "\e[B", "j"
-      index = (index + 1) % filtered_branches.size unless search_mode
+      index = (index + 1) % filtered_branches.size if !search_mode && !filtered_branches.empty?
     when "/"
       search_mode = true
       search_query = ""
-    else
+    when "\u007F" # Handle backspace
+      search_query.chop! if search_mode
+    when "\e"
+      search_mode = false
+    when /^[a-zA-Z0-9]$/
+      search_query << input if search_mode
       if search_mode
         if input == "\u007F" # Handle backspace
           search_query.chop!
