@@ -37,8 +37,9 @@ def display_picker(branches)
       search_query = ""
     when "\u007F" # Handle backspace
       search_query.chop! if search_mode
-    when "\e"
-      search_mode = false
+    when "\e", "\u0003" # Escape or Ctrl+C
+      puts "Exiting without changing branch."
+      exit
     else
       if search_mode
         if input == "\u007F" # Handle backspace
