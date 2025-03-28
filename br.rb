@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 def get_branches
+  current_branch = `git rev-parse --abbrev-ref HEAD`.strip
   `git for-each-ref --sort=-committerdate refs/heads/ --format='%(refname:short) %(committerdate:relative)'`.split("\n")
 end
 
@@ -24,10 +25,17 @@ def display_picker(branches)
       puts "Use j/k or arrow keys to navigate, / to search, Enter to select, Esc or Ctrl+C to exit."
     end
     filtered_branches.each_with_index do |branch, i|
+      branch_name, time_ago = branch.split(' ', 2)
+      branch_display = if branch_name == current_branch
+                         "\e[32m#{branch_name}\e[0m" # Green for current branch
+                       else
+                         branch_name
+                       end
+      time_display = "\e[2m#{time_ago}\e[0m" # Dim the time
       if i == index
-        puts "> #{branch}"
+        puts "> #{branch_display} #{time_display}"
       else
-        puts "  #{branch}"
+        puts "  #{branch_display} #{time_display}"
       end
     end
 
