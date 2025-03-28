@@ -7,6 +7,9 @@ end
 require 'io/console'
 
 def display_picker(branches)
+  search_mode = false
+  search_query = ""
+
   if search_mode
     puts "Search: #{search_query}"
   else
