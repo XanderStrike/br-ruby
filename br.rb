@@ -7,12 +7,31 @@ def get_branches
   end
 end
 
+require 'io/console'
+
 def display_picker(branches)
   puts "Select a branch to switch to:"
-  branches.each { |branch| puts branch }
-  print "Enter the number of the branch: "
-  choice = gets.to_i
-  choice
+  index = 0
+
+  loop do
+    system("clear")
+    branches.each_with_index do |branch, i|
+      if i == index
+        puts "> #{branch}"
+      else
+        puts "  #{branch}"
+      end
+    end
+
+    case $stdin.getch
+    when "\r"
+      return index + 1
+    when "\e[A", "k"
+      index = (index - 1) % branches.size
+    when "\e[B", "j"
+      index = (index + 1) % branches.size
+    end
+  end
 end
 
 def switch_branch(branches, choice)
