@@ -15,6 +15,7 @@ def display_picker(branches)
   loop do
     system("clear")
     filtered_branches = branches.select { |branch| branch.include?(search_query) }
+    puts "Search: #{search_query}" if search_mode
     filtered_branches.each_with_index do |branch, i|
       if i == index
         puts "> #{branch}"
