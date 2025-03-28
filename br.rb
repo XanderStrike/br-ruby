@@ -2,12 +2,15 @@
 
 def get_branches
   current_branch = `git rev-parse --abbrev-ref HEAD`.strip
+  branches = `git for-each-ref --sort=-committerdate refs/heads/ --format='%(refname:short) %(committerdate:relative)'`.split("\n")
+  return branches, current_branch
+  current_branch = `git rev-parse --abbrev-ref HEAD`.strip
   `git for-each-ref --sort=-committerdate refs/heads/ --format='%(refname:short) %(committerdate:relative)'`.split("\n")
 end
 
 require 'io/console'
 
-def display_picker(branches)
+def display_picker(branches, current_branch)
   search_mode = false
   search_query = ""
 
@@ -91,6 +94,6 @@ def switch_branch(branches, choice)
   end
 end
 
-branches = get_branches
-choice = display_picker(branches)
+branches, current_branch = get_branches
+choice = display_picker(branches, current_branch)
 switch_branch(branches, choice)
