@@ -12,10 +12,13 @@ require 'io/console'
 def display_picker(branches)
   puts "Select a branch to switch to:"
   index = 0
+  search_mode = false
+  search_query = ""
 
   loop do
     system("clear")
-    branches.each_with_index do |branch, i|
+    filtered_branches = branches.select { |branch| branch.include?(search_query) }
+    filtered_branches.each_with_index do |branch, i|
       if i == index
         puts "> #{branch}"
       else
@@ -23,13 +26,18 @@ def display_picker(branches)
       end
     end
 
-    case $stdin.getch
+    input = $stdin.getch
+    case input
     when "\r"
-      return index + 1
+      return branches.index(filtered_branches[index]) + 1
     when "\e[A", "k"
-      index = (index - 1) % branches.size
+      index = (index - 1) % filtered_branches.size
     when "\e[B", "j"
-      index = (index + 1) % branches.size
+      index = (index + 1) % filtered_branches.size
+    when "/"
+      print "Search: "
+      search_query = gets.chomp
+      index = 0
     end
   end
 end
