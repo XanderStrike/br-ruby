@@ -27,7 +27,12 @@ def display_picker(branches, current_branch)
     else
       puts "Use j/k or arrow keys to navigate, / to search, Enter to select, Esc or Ctrl+C to exit."
     end
-    filtered_branches.each_with_index do |branch, i|
+    start_index = [index - 5, 0].max
+    end_index = [start_index + 10, filtered_branches.size].min
+    visible_branches = filtered_branches[start_index...end_index]
+
+    visible_branches.each_with_index do |branch, i|
+      actual_index = start_index + i
       branch_name, time_ago = branch.split(' ', 2)
       branch_display = if branch_name == current_branch
                          "\e[32m#{branch_name}\e[0m" # Green for current branch
@@ -35,7 +40,7 @@ def display_picker(branches, current_branch)
                          branch_name
                        end
       time_display = "\e[2m#{time_ago}\e[0m" # Dim the time
-      if i == index
+      if actual_index == index
         puts "> #{branch_display} #{time_display}"
       else
         puts "  #{branch_display} #{time_display}"
