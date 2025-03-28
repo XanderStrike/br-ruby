@@ -10,11 +10,7 @@ def display_picker(branches)
   search_mode = false
   search_query = ""
 
-  if search_mode
-    puts "Search: #{search_query}"
-  else
-    puts "Use j/k or arrow keys to navigate, / to search, Enter to select, Esc or Ctrl+C to exit."
-  end
+  puts "Use j/k or arrow keys to navigate, / to search, Enter to select, Esc or Ctrl+C to exit."
   index = 0
   search_mode = false
   search_query = ""
@@ -22,7 +18,11 @@ def display_picker(branches)
   loop do
     system("clear")
     filtered_branches = branches.select { |branch| branch.include?(search_query) }
-    puts "Search: #{search_query}" if search_mode
+    if search_mode
+      puts "Search: #{search_query}"
+    else
+      puts "Use j/k or arrow keys to navigate, / to search, Enter to select, Esc or Ctrl+C to exit."
+    end
     filtered_branches.each_with_index do |branch, i|
       if i == index
         puts "> #{branch}"
