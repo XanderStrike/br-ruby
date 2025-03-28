@@ -28,9 +28,9 @@ def display_picker(branches)
     case input
     when "\r"
       return branches.index(filtered_branches[index])
-    when "\e[A"
+    when "\e[A", "k"
       index = (index - 1) % filtered_branches.size unless search_mode
-    when "\e[B"
+    when "\e[B", "j"
       index = (index + 1) % filtered_branches.size unless search_mode
     when "/"
       search_mode = true
