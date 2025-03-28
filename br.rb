@@ -36,7 +36,7 @@ end
 
 def switch_branch(branches, choice)
   if choice.between?(1, branches.size)
-    branch_name = branches[choice - 1].split.first
+    branch_name = branches[choice - 1].split[1]
     system("git checkout #{branch_name}")
   else
     puts "Invalid choice"
