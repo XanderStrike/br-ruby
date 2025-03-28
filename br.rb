@@ -1,10 +1,7 @@
 #!/usr/bin/env ruby
 
 def get_branches
-  branches = `git for-each-ref --sort=-committerdate refs/heads/ --format='%(refname:short) %(committerdate:relative)'`.split("\n")
-  branches.map.with_index(1) do |branch, index|
-    "#{index}. #{branch}"
-  end
+  `git for-each-ref --sort=-committerdate refs/heads/ --format='%(refname:short) %(committerdate:relative)'`.split("\n")
 end
 
 require 'io/console'
@@ -29,14 +26,20 @@ def display_picker(branches)
     input = $stdin.getch
     case input
     when "\r"
-      return branches.index(filtered_branches[index]) + 1
+      return branches.index(filtered_branches[index])
     when "\e[A", "k"
       index = (index - 1) % filtered_branches.size
     when "\e[B", "j"
       index = (index + 1) % filtered_branches.size
     when "/"
-      print "Search: "
-      search_query = gets.chomp
+      search_mode = true
+      search_query = ""
+    when search_mode
+      if input == "\u007F" # Handle backspace
+        search_query.chop!
+      else
+        search_query << input
+      end
       index = 0
     end
   end
