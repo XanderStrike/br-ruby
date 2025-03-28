@@ -34,13 +34,15 @@ def display_picker(branches)
     when "/"
       search_mode = true
       search_query = ""
-    when search_mode
-      if input == "\u007F" # Handle backspace
-        search_query.chop!
-      else
-        search_query << input
+    else
+      if search_mode
+        if input == "\u007F" # Handle backspace
+          search_query.chop!
+        else
+          search_query << input
+        end
+        index = 0
       end
-      index = 0
     end
   end
 end
