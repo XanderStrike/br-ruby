@@ -4,8 +4,35 @@ def get_branches
   current_branch = `git rev-parse --abbrev-ref HEAD`.strip
   branches = `git for-each-ref --sort=-committerdate refs/heads/ --format='%(refname:short) %(committerdate:relative)'`.split("\n")
   return branches, current_branch
-  current_branch = `git rev-parse --abbrev-ref HEAD`.strip
-  `git for-each-ref --sort=-committerdate refs/heads/ --format='%(refname:short) %(committerdate:relative)'`.split("\n")
+end
+
+def find_closest_branch(branches, query)
+  query = query.downcase
+
+  # Extract just the branch names for matching
+  branch_names = branches.map { |branch| branch.split.first }
+
+  # First try exact match
+  exact_match = branch_names.find { |name| name.downcase == query }
+  return branches[branch_names.index(exact_match)] if exact_match
+
+  # Then try branches that start with the query
+  starts_with = branch_names.select { |name| name.downcase.start_with?(query) }
+  if starts_with.any?
+    # Return the shortest match (most likely to be intended)
+    best_match = starts_with.min_by(&:length)
+    return branches[branch_names.index(best_match)]
+  end
+
+  # Finally try branches that contain the query
+  contains = branch_names.select { |name| name.downcase.include?(query) }
+  if contains.any?
+    # Return the shortest match
+    best_match = contains.min_by(&:length)
+    return branches[branch_names.index(best_match)]
+  end
+
+  nil
 end
 
 require 'io/console'
@@ -99,6 +126,32 @@ def switch_branch(branches, choice)
   end
 end
 
+def switch_branch_by_name(branch_line)
+  branch_name = branch_line.split.first
+  puts "Switching to branch: #{branch_name}"
+  system("git checkout #{branch_name}")
+end
+
 branches, current_branch = get_branches
-choice = display_picker(branches, current_branch)
-switch_branch(branches, choice)
+
+# Check if an argument was provided
+if ARGV.length > 0
+  query = ARGV[0]
+  matching_branch = find_closest_branch(branches, query)
+
+  if matching_branch
+    switch_branch_by_name(matching_branch)
+  else
+    puts "No branch found matching '#{query}'"
+    puts "Available branches:"
+    branches.each do |branch|
+      branch_name = branch.split.first
+      puts "  #{branch_name}"
+    end
+    exit 1
+  end
+else
+  # No argument provided, show interactive picker
+  choice = display_picker(branches, current_branch)
+  switch_branch(branches, choice)
+end
